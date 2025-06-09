@@ -28,6 +28,17 @@ const __dirname = path.dirname(__filename);
 app.engine("html", hbs.__express);
 app.set("view engine", "html");
 
+app.set("views", path.join(__dirname, "View")); // ✅ point to base View folder
+
+// Register partials
+hbs.registerPartials(path.join(__dirname, "View", "Partials"));
+
+
+// Static files
+app.use(express.static(path.join(__dirname, 'Public')));
+app.use('/profile-images', express.static(path.join(__dirname, 'ProfileImages')));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

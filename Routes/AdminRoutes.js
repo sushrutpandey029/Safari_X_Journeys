@@ -1,10 +1,9 @@
 import express from 'express'
 const AdminRoute = express.Router();
 
-import{userregistartionandlogin} from '../Controllers/Admin_Controller.js'
+import{renderdashbord} from '../Controllers/Admin_Controller.js'
 
-AdminRoute.get('/',userregistartionandlogin);
+AdminRoute.get('/',renderdashbord);
+
 
 export default AdminRoute;
-
-

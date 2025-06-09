@@ -1,8 +1,8 @@
 import express from 'express'
 const GuideRoute = express.Router();
 
-GuideRoute.get('/',(req,res)=>{
-    return res.send("hello guide how are")
-});
+import {guidelogin} from '../Controllers/Guide_Controller.js'
+
+GuideRoute.get('/',guidelogin);
 
 export default GuideRoute;
