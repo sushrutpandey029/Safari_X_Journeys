@@ -10,8 +10,8 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="/img/favicon.png" rel="icon">
+    <link href="/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -20,11 +20,11 @@
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
 
     <!-- Template Main CSS File -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 
 
 </head>
@@ -32,30 +32,36 @@
 <body>
     
     <section class="login-section">
+          <div class="pagetitle">
+        <h1>Admin</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">SAFARI_X_JOURNEYS</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+    
         <div class="login-container">
-            <div class="login-box">
-                <h2 class="logo">DRDO CFEES</h2>
-                <h3>Login to Account</h3>
-                <p>Access to the most powerful tool in the entire design and web industry.</p>
-                <form>
-                    <input type="email" placeholder="E-mail Address" required>
-                    <input type="password" placeholder="Password" required>
-                    <button type="submit">Login</button>
-                </form>
-                <div class="forgot-password">
-                    <a href="#">Forget password?</a>
-                </div>
-                <p class="register">Register new account</p>
-            </div>
+            <!-- ...existing code... -->
+<div class="login-box">
+    <h2 class="logo">SAFARI_X_JOURNEYS</h2>
+    <form id="AdminProfile" action="/adminlogin" method="POST">
+        <input type="email" name="email" placeholder="E-mail Address" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+</div>
+<!-- ...existing code... -->
         </div>
     </section>
 
 
     <!-- Vendor JS Files -->
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
 
     <!-- Template Main JS File -->
-    <script src="assets/js/main.js"></script>
+    <script src="/js/main.js"></script>
 
 </body>
 

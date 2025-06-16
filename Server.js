@@ -8,6 +8,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 import session from "express-session";
+import flash from "express-flash";
+import handlebars from 'express-handlebars';
 import sequelize from "./DB_Connection/MySql_Connnet.js";
 import AdminRoutes from "./Routes/AdminRoutes.js";
 import ApiRoutes from "./Routes/ApiRoutes.js";
@@ -20,13 +22,18 @@ dotenv.config();
 
 const app = express();
 
+hbs.registerHelper('eq', function (a, b) {
+  return a == b;
+});
+
 app.use(cors());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.engine("html", hbs.__express);
 app.set("view engine", "html");
+app.engine("html", hbs.__express);
+
 
 app.set("views", path.join(__dirname, "View")); // ✅ point to base View folder
 
@@ -39,8 +46,8 @@ app.use(express.static(path.join(__dirname, 'Public')));
 app.use('/profile-images', express.static(path.join(__dirname, 'ProfileImages')));
 
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const PORT = process.env.PORT || 2625;
 
@@ -65,6 +72,14 @@ app.use(
         },
     })
 );
+
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 app.use('/',AdminRoutes);
 app.use('/api',ApiRoutes);

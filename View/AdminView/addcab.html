@@ -1,0 +1,54 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Add Cab</h1>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-6">
+                {{#if error}}
+                  <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                <form action="/cabs/add" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="guideid" class="form-label">Guide ID</label>
+                        <input type="number" class="form-control" id="guideid" name="guideid"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Guide Email</label>
+                        <input type="email" class="form-control" id="email" name="email"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="cabtype" class="form-label">Cab Type</label>
+                        <input type="text" class="form-control" id="cabtype" name="cabtype"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="cabseats" class="form-label">Cab Seats</label>
+                        <input type="number" class="form-control" id="cabseats" name="cabseats"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="cabnumber" class="form-label">Cab Number</label>
+                        <input type="text" class="form-control" id="cabnumber" name="cabnumber"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_per_km" class="form-label">Price per KM</label>
+                        <input type="number" step="0.01" class="form-control" id="price_per_km" name="price_per_km"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_per_day" class="form-label">Price per Day</label>
+                        <input type="number" step="0.01" class="form-control" id="price_per_day" name="price_per_day"  >
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Images (URLs, comma separated)</label>
+                        <input type="file" class="form-control" id="images" name="images">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Cab</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+{{> adminfooter}}

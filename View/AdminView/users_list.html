@@ -1,0 +1,44 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Users</h1>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                {{#if error}}
+                  <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                <table id="userTable" class="display table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each users}}
+                        <tr>
+                            <td>{{@index}}</td>
+                            <td>{{this.fullname}}</td>
+                            <td>{{this.emailid}}</td>
+                            <td>{{this.phonenumber}}</td>
+                            <td>
+                              <form method="POST" action="/users/{{this.id}}?_method=DELETE" onsubmit="return confirm('Delete this user?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                              </form>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+{{> adminfooter}}

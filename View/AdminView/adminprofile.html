@@ -1,0 +1,67 @@
+{{> adminheader admin=admin}}
+
+{{>adminsidebar}}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Admin</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">SAFARI_X_JOURNEYS</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+        <div class="row">
+
+            <!-- Left side columns -->
+            <div class="col-lg-12">
+                <div class="row">
+
+                    <!-- Sales Card -->
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Admin database Management</h5>
+                                <form action="/admin/updateprofile" method="POST">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4 mb-4">
+                                            <label for="">fullname</label>
+                                            <input name="fullname" type="text" class="form-control" id="fullname"
+                                                value="{{admin.fullname}}">
+                                        </div>
+                                        <div class="col-sm-4 mb-4">
+                                            <label for="">email</label>
+                                            <input name="email" type="text" class="form-control" id="email"
+                                                value="{{admin.email}}">
+                                        </div>
+                                        <div class="col-sm-4 mb-4">
+                                            <label for="">phonenumber</label>
+                                            <input name="phonenumber" type="text" class="form-control" id="phonenumber"
+                                                value="{{admin.phonenumber}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button type="submit" class="btn btn-info mt-4">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- End Sales Card -->
+
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+{{>adminfooter}}

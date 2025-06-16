@@ -1,33 +1,44 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../DB_Connection/MySql_Connect.js";
+import sequelize from "../../DB_Connection/MySql_Connnet.js";
 
 const CabDetails = sequelize.define('cabdetails', {
+    cabid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    guideid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     cabtype: {
         type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: null
+        allowNull: false
     },
-    cabimage: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: null
-    },
-    cabstatus: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: null
+    cabseats: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
     cabnumber: {
         type: DataTypes.STRING,
-        allowNull: true,
-        unique: true,
-        defaultValue: null
+        allowNull: false,
     },
-    seatingcapacity: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null
+    price_per_km: {
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
+    price_per_day: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    images: {
+        type: DataTypes.STRING,
+        allowNull: true
+    }
+}, {
+    tableName: 'cabdetails',
+    timestamps: false
 });
+
+
 
 export default CabDetails;

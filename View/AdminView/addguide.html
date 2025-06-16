@@ -1,0 +1,90 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Add Guide</h1>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-8">
+        {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+        {{/if}}
+        {{#if success}}
+        <div class="alert alert-success">{{success}}</div>
+        {{/if}}
+
+        <form action="/submitguide" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="guidename" class="form-label">Guide Name</label>
+            <input type="text" class="form-control" id="guidename" name="guidename" value="{{formData.guidename}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-control" id="gender" name="gender">
+              <option value="">-- Select Gender --</option>
+              <option value="Male" {{#if (eq formData.gender "Male")}}selected{{/if}}>Male</option>
+              <option value="Female" {{#if (eq formData.gender "Female")}}selected{{/if}}>Female</option>
+              <option value="Other" {{#if (eq formData.gender "Other")}}selected{{/if}}>Other</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Guide Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{formData.email}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="phonenumber" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phonenumber" name="phonenumber" value="{{formData.phonenumber}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="languagespoken" class="form-label">Languages Spoken</label>
+            <input type="text" class="form-control" id="languagespoken" name="languagespoken" value="{{formData.languagespoken}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="experience_years" class="form-label">Experience (in years)</label>
+            <input type="number" class="form-control" id="experience_years" name="experience_years" value="{{formData.experience_years}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{formData.city}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="{{formData.state}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="{{formData.country}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="availability" class="form-label">Availability</label>
+            <select class="form-control" id="availability" name="availability">
+              <option value="true" {{#if (eq formData.availability "true")}}selected{{/if}}>Available</option>
+              <option value="false" {{#if (eq formData.availability "false")}}selected{{/if}}>Not Available</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="profileimages" class="form-label">Profile Image</label>
+            <input type="file" class="form-control" id="profileimages" name="profileimages" accept="image/*">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Add Guide</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+{{> adminfooter}}

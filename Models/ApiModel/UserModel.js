@@ -12,18 +12,22 @@ const users = sequelize.define('safarix_users', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+
     phonenumber: {
         type: DataTypes.STRING,
         allowNull: false,
     },
+
     emailid: {
         type: DataTypes.STRING,
         allowNull: false,
     },
+
     password: {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    
     refreshToken: {
         type: DataTypes.STRING,
         allowNull: true,
