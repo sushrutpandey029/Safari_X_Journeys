@@ -6,10 +6,6 @@ const CabDetails = sequelize.define('cabdetails', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    guideid: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
     cabtype: {
         type: DataTypes.STRING,
         allowNull: false

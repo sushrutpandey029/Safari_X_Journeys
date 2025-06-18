@@ -1,4 +1,9 @@
 import users from '../Models/ApiModel/UserModel.js';
+import BannerModel from '../Models/AdminModel/BannerModel.js';
+import FAQModel from '../Models/AdminModel/FAQModel.js';
+import BlogModel from '../Models/AdminModel/BlogModel.js';
+import nodemailer from "nodemailer";
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -209,8 +214,6 @@ export const registerOrLogin = async (req, res) => {
     }
 };
 
-
-
 export const UserLogout = async (req, res) => {
     try {
         req.session.destroy((err) => {
@@ -283,7 +286,8 @@ export const userchangepassword = async (req, res) => {
 export const getuserprofile = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await users.findOne({ where: { id },
+        const user = await users.findOne({
+            where: { id },
             attributes: { exclude: ['password', 'refreshToken'] }
         });
 
@@ -332,7 +336,7 @@ export const userUpdateProfile = async (req, res) => {
             if (!emailRegex.test(emailid)) {
                 return res.status(401).json({ success: false, message: "Invalid email format" });
             }
-            
+
             const emailExists = await users.findOne({ where: { emailid } });
             if (emailExists && emailExists.id !== parseInt(id)) {
                 return res.status(401).json({ success: false, message: "Email already in use by another user" });
@@ -363,6 +367,128 @@ export const userUpdateProfile = async (req, res) => {
         });
     }
 };
+
+export const getAllBanners = async (req, res) => {
+    try {
+        const banners = await BannerModel.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Banners fetched successfully',
+            data: banners
+        });
+
+    } catch (error) {
+        console.error('Get All Banners Error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching banners'
+        });
+    }
+};
+
+export const listFAQs = async (req, res) => {
+    try {
+        const faqs = await FAQModel.findAll({
+            order: [["createdAt", "DESC"]],
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "FAQs fetched successfully",
+            data: faqs,
+        });
+
+    } catch (error) {
+        console.error("FAQ List API Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to fetch FAQs",
+            error: error.message,
+        });
+    }
+};
+
+export const listBlogs = async (req, res) => {
+    try {
+        const blogs = await BlogModel.findAll({
+            order: [["createdAt", "DESC"]],
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Blogs fetched successfully",
+            data: blogs,
+        });
+
+    } catch (error) {
+        console.error("Blogs List API Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to fetch blogs",
+            error: error.message,
+        });
+    }
+};
+
+export const sendMailToAdmin = async (req, res) => {
+    try {
+        const { name, email, message } = req.body;
+
+        // Validate input
+        if (!name || !email || !message) {
+            return res.status(400).json({
+                success: false,
+                message: "Name, email, and message are required"
+            });
+        }
+
+        // Email format validation
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email format"
+            });
+        }
+
+        // Configure transporter
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER, // Use environment variables
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        // Email options
+        const mailOptions = {
+            from: `"${name}" <${email}>`,
+            to: 'zebashaifi@gmail.com', // Admin's email
+            subject: `Hello Admin - Message from ${name}`,
+            text: message
+        };
+
+        // Send email
+        await transporter.sendMail(mailOptions);
+
+        return res.status(201).json({
+            success: true,
+            message: "Email sent to admin successfully"
+        });
+
+    } catch (error) {
+        console.error("Send mail error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+};
+
 
 
 

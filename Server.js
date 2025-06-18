@@ -13,7 +13,7 @@ import handlebars from 'express-handlebars';
 import sequelize from "./DB_Connection/MySql_Connnet.js";
 import AdminRoutes from "./Routes/AdminRoutes.js";
 import ApiRoutes from "./Routes/ApiRoutes.js";
-import GuideRoute from './Routes/GuideRoutes.js'
+import GuideRoute from './Routes/GuideRoutes.js';
 
 const require = createRequire(import.meta.url);
 const MySQLStore = require('express-mysql-session')(session);
@@ -22,35 +22,45 @@ dotenv.config();
 
 const app = express();
 
-hbs.registerHelper('eq', function (a, b) {
-  return a == b;
-});
-
-app.use(cors());
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Register handlebars helper
+hbs.registerHelper('eq', function (a, b) {
+    return a == b;
+});
+
+// ✅ Register Handlebars Partials
+app.set("views", path.join(__dirname, "View"));
+hbs.registerPartials(path.join(__dirname, "View", "Partials"));
 app.set("view engine", "html");
 app.engine("html", hbs.__express);
 
-
-app.set("views", path.join(__dirname, "View")); // ✅ point to base View folder
-
-// Register partials
-hbs.registerPartials(path.join(__dirname, "View", "Partials"));
-
-
-// Static files
+// ✅ Static Files
 app.use(express.static(path.join(__dirname, 'Public')));
 app.use('/profile-images', express.static(path.join(__dirname, 'ProfileImages')));
+app.use('/banner/images', express.static('Public/banner/images'));
+app.use('/blog/images', express.static('Public/blog/images'));
 
-
+// ✅ Body Parsers
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 2625;
+// ✅ Trust proxy for ngrok / production reverse proxy
+app.set("trust proxy", 1);
 
+// ✅ CORS Fix for React & Ngrok frontend
+app.use(cors({
+    origin: [
+        "http://localhost:3000", // React dev
+        "https://38f3-2401-4900-47fa-e5a5-edf2-b4f5-8d2d-9b59.ngrok-free.app" // ngrok (replace this if using it)
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
+
+// Session Store
 const sessionStore = new MySQLStore({
     host: "127.0.0.1",
     port: 3306,
@@ -67,31 +77,37 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000,
+            secure: false, // true if using https
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
         },
     })
 );
 
 app.use(flash());
 
+//Flash messages globally
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
 });
 
-app.use('/',AdminRoutes);
-app.use('/api',ApiRoutes);
-app.use('/guide',GuideRoute);
+//Routes
+app.use('/', AdminRoutes);
+app.use('/api', ApiRoutes);
+app.use('/guide', GuideRoute);
+
+//Server Boot
+const PORT = process.env.PORT || 2625;
 
 const startServer = async () => {
     try {
         await sequelize.authenticate();
-        console.log("DB connected.");
+        console.log("✅ DB connected.");
         await sequelize.sync({ alter: true });
-        app.listen(PORT, () =>
-            console.log(`Server running: http://localhost:${PORT}`)
+        app.listen(PORT, '0.0.0.0',() =>
+            console.log(`🚀 Server running: http://localhost:${PORT}`)
         );
     } catch (err) {
         console.error("Server failed:", err);

@@ -1,59 +1,107 @@
-    <!-- ======= Sidebar ======= -->
-    <aside id="sidebar" class="sidebar">
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+                <i class="bi bi-window-dock"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
 
-        <ul class="sidebar-nav" id="sidebar-nav">
-            <li class="nav-item">
-                <a class="nav-link " href="/dashboard">
-                    <i class="bi bi-window-dock"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/users">
-                    <i class="bi bi-wallet"></i>
-                    <span>User Management</span>
-                </a>
-            </li>
+        <!-- User Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#user-management" role="button"
+                aria-expanded="false" aria-controls="user-management">
+                <i class="bi bi-wallet"></i>
+                <span>User Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="user-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/users"><i class="bi bi-circle"></i><span>All Users</span></a></li>
+            </ul>
+        </li>
 
-             <li class="nav-item">
-                <a class="nav-link collapsed" href="/addcabform">
-                    <i class="bi bi-wallet"></i>
-                    <span>Cab Management</span>
-                </a>
-            </li>
+        <!-- Cab Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#cab-management" role="button"
+                aria-expanded="false" aria-controls="cab-management">
+                <i class="bi bi-wallet"></i>
+                <span>Cab Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="cab-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/addcabform"><i class="bi bi-circle"></i><span>Add Cab</span></a></li>
+                <li><a href="/cabs"><i class="bi bi-circle"></i><span>View Cabs</span></a></li>
+            </ul>
+        </li>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/addguideform">
-                    <i class="bi bi-wallet"></i>
-                    <span>Guide Management</span>
-                </a>
-            </li>
-            {{!-- <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-login.html">
-                    <i class="bi bi-wallet"></i>
-                    <span>Establishment</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="change-password.html">
-                    <i class="bi bi-file-earmark-lock"></i>
-                    <span>Building Detail</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="change-password.html">
-                    <i class="bi bi-file-earmark-lock"></i>
-                    <span>Audit</span>
-                </a>
-            </li> --}}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/adminlogout">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-            <!-- End Blank Page Nav -->
+      
 
-        </ul>
+        <!-- Banner Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#banner-management" role="button"
+                aria-expanded="false" aria-controls="banner-management">
+                <i class="bi bi-wallet"></i>
+                <span>Banner Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="banner-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/banner/addform"><i class="bi bi-circle"></i><span>Add Banner</span></a></li>
+                <li><a href="/banner/list"><i class="bi bi-circle"></i><span>View Banners</span></a></li>
+            </ul>
+        </li>
 
-    </aside><!-- End Sidebar-->
+        <!-- FAQ Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#faq-management" role="button"
+                aria-expanded="false" aria-controls="faq-management">
+                <i class="bi bi-wallet"></i>
+                <span>FAQ Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="faq-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/faq/addform"><i class="bi bi-circle"></i><span>Add FAQ</span></a></li>
+                <li><a href="/faq/list"><i class="bi bi-circle"></i><span>View FAQ</span></a></li>
+            </ul>
+        </li>
+
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#blog-management" role="button"
+                aria-expanded="false" aria-controls="blog-management">
+                <i class="bi bi-wallet"></i>
+                <span>Blog Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="blog-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/blog/addform"><i class="bi bi-circle"></i><span>Add Blog</span></a></li>
+                <li><a href="/blog/list"><i class="bi bi-circle"></i><span>View Blog</span></a></li>
+            </ul>
+        </li>
+
+        <!-- Guide Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#guide-management" role="button"
+                aria-expanded="false" aria-controls="guide-management">
+                <i class="bi bi-wallet"></i>
+                <span>Guide Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="guide-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/addguideform"><i class="bi bi-circle"></i><span>Add Guide</span></a></li>
+                <li><a href="/guides"><i class="bi bi-circle"></i><span>View Guides</span></a></li>
+            </ul>
+        </li>
+
+        <!-- Logout -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="/adminlogout">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+
+
+</aside><!-- End Sidebar-->

@@ -1,0 +1,64 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Add Banners</h1>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-8">
+                {{#if error}}
+                <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                {{#if success}}
+                <div class="alert alert-success">{{success}}</div>
+                {{/if}}
+
+                <form action="/banner/add" method="POST" enctype="multipart/form-data">
+                    <div id="bannerRepeater">
+                        <div class="banner-group mb-4 border p-3 rounded">
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" name="bannerimage[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Text</label>
+                                <input type="text" class="form-control" name="title[]" required>
+                            </div>
+                            <button type="button" class="btn btn-danger remove-banner">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="addBannerBtn" class="btn btn-secondary mb-3">+ Add More</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit Banners</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const repeaterContainer = document.getElementById("bannerRepeater");
+    const addBtn = document.getElementById("addBannerBtn");
+
+    addBtn.addEventListener("click", () => {
+        const clone = repeaterContainer.firstElementChild.cloneNode(true);
+        // Clear inputs in cloned block
+        clone.querySelectorAll("input").forEach(input => input.value = "");
+        repeaterContainer.appendChild(clone);
+    });
+
+    repeaterContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-banner")) {
+            if (repeaterContainer.childElementCount > 1) {
+                e.target.closest(".banner-group").remove();
+            } else {
+                alert("At least one banner is required.");
+            }
+        }
+    });
+</script>
+
+{{> adminfooter}}

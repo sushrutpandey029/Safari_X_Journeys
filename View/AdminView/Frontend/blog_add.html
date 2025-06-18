@@ -1,0 +1,77 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Add Blogs</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-8">
+                {{#if error}}
+                <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                {{#if success}}
+                <div class="alert alert-success">{{success}}</div>
+                {{/if}}
+
+                <form action="/blog/add" method="POST" enctype="multipart/form-data">
+                    <div id="faqRepeater">
+                        <div class="faq-group mb-4 border p-3 rounded">
+
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" name="image[]" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Title</label>
+                                <input class="form-control" name="title[]" rows="3" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Heading</label>
+                                <input class="form-control" name="heading[]" rows="3" required>
+                            </div>
+
+                             <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <input class="form-control" name="description[]" rows="3" required>
+                            </div>
+
+                            <button type="button" class="btn btn-danger remove-faq">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="addFaqBtn" class="btn btn-secondary mb-3">+ Add More</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit Blogs</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const faqContainer = document.getElementById("faqRepeater");
+    const addFaqBtn = document.getElementById("addFaqBtn");
+
+    addFaqBtn.addEventListener("click", () => {
+        const clone = faqContainer.firstElementChild.cloneNode(true);
+        clone.querySelectorAll("input, textarea").forEach(field => field.value = "");
+        faqContainer.appendChild(clone);
+    });
+
+    faqContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-faq")) {
+            if (faqContainer.childElementCount > 1) {
+                e.target.closest(".faq-group").remove();
+            } else {
+                alert("At least one FAQ is required.");
+            }
+        }
+    });
+</script>
+
+{{> adminfooter}}

@@ -1,0 +1,64 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Add FAQs</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-8">
+                {{#if error}}
+                <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                {{#if success}}
+                <div class="alert alert-success">{{success}}</div>
+                {{/if}}
+
+                <form action="/faq/add" method="POST">
+                    <div id="faqRepeater">
+                        <div class="faq-group mb-4 border p-3 rounded">
+                            <div class="mb-3">
+                                <label class="form-label">Question</label>
+                                <input type="text" class="form-control" name="question[]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Answer</label>
+                                <textarea class="form-control" name="answer[]" rows="3" required></textarea>
+                            </div>
+                            <button type="button" class="btn btn-danger remove-faq">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="addFaqBtn" class="btn btn-secondary mb-3">+ Add More</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit FAQs</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const faqContainer = document.getElementById("faqRepeater");
+    const addFaqBtn = document.getElementById("addFaqBtn");
+
+    addFaqBtn.addEventListener("click", () => {
+        const clone = faqContainer.firstElementChild.cloneNode(true);
+        clone.querySelectorAll("input, textarea").forEach(field => field.value = "");
+        faqContainer.appendChild(clone);
+    });
+
+    faqContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-faq")) {
+            if (faqContainer.childElementCount > 1) {
+                e.target.closest(".faq-group").remove();
+            } else {
+                alert("At least one FAQ is required.");
+            }
+        }
+    });
+</script>
+
+{{> adminfooter}}
