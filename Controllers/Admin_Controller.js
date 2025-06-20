@@ -2,7 +2,12 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { Op, Sequelize } from 'sequelize';
 import AdminModel from '../Models/AdminModel/Admin_Model.js';
-import GuideMoel from '../Models/AdminModel/Guide_Model.js';
+
+import CabModel from '../Models/AdminModel/CabModel.js';
+import DriverModel from '../Models/AdminModel/DriverModel.js';
+import GuideModel from '../Models/AdminModel/GuideModel.js';
+import CabAssignmentModel from '../Models/AdminModel/CabAssignmentModel.js'
+
 import BannerModel from '../Models/AdminModel/BannerModel.js'
 import users from '../Models/ApiModel/UserModel.js';
 import FAQModel from '../Models/AdminModel/FAQModel.js';
@@ -308,54 +313,88 @@ export const addcabform = async (req, res) => {
     }
 };
 
-// export const addCab = async (req, res) => {
-//     try {
-//         const {
-//             cabtype,
-//             cabseats,
-//             cabnumber,
-//             price_per_km,
-//             price_per_day
-//         } = req.body;
+export const addCab = async (req, res) => {
+    try {
+        const {
+            cabtype,
+            cabseats,
+            cabnumber,
+            price_per_km,
+            price_per_day
+        } = req.body;
 
-//         const missingFields = [];
-//         if (!cabtype) missingFields.push("cabtype");
-//         if (!cabseats) missingFields.push("cabseats");
-//         if (!cabnumber) missingFields.push("cabnumber");
-//         if (!price_per_km) missingFields.push("price_per_km");
-//         if (!price_per_day) missingFields.push("price_per_day");
+        // Validate required fields
+        const requiredFields = {
+            cabtype: "Cab type",
+            cabseats: "Cab seats",
+            cabnumber: "Cab number",
+            price_per_km: "Price per km",
+            price_per_day: "Price per day"
+        };
 
-//         if (missingFields.length > 0) {
-//             req.flash("error", `Missing fields: ${missingFields.join(", ")}`);
-//             return res.redirect("/addguideform");
-//         }
+        const missingFields = Object.entries(requiredFields)
+            .filter(([key]) => !req.body[key])
+            .map(([_, value]) => value);
 
-//         // Image handling
-//         const imagePath = req.file ? req.file.filename : null;
+        if (missingFields.length > 0) {
+            req.flash("error", `Missing required fields: ${missingFields.join(", ")}`);
+            return res.redirect("/addcabform");
+        }
 
-//         // Generate a random cabid (e.g., between 10000–99999 or use UUID)
-//         const randomCabId = Math.floor(10000 + Math.random() * 90000);
+        // Validate cab number format (basic Indian format)
+        if (!/^[A-Z]{2}\s?\d{2}\s?[A-Z]{1,2}\s?\d{4}$/i.test(cabnumber)) {
+            req.flash("error", "Invalid cab number format. Example: MH02AB1234");
+            return res.redirect("/addcabform");
+        }
 
-//         // Save to DB
-//         const newCab = await CabDetails.create({
-//             cabid: randomCabId,
-//             cabtype,
-//             cabseats,
-//             cabnumber,
-//             price_per_km,
-//             price_per_day,
-//             images: imagePath
-//         });
+        // Check if cab number already exists
+        const existingCab = await CabModel.findOne({ where: { cabnumber } });
+        if (existingCab) {
+            req.flash("error", "Cab with this number already exists");
+            return res.redirect("/addcabform");
+        }
 
-//         req.flash("success", "Cab added successfully");
-//         return res.redirect("/addcabform");
+        // Create new cab
+        const newCab = await CabModel.create({
+            cabtype,
+            cabseats: parseInt(cabseats),
+            cabnumber: cabnumber.toUpperCase().replace(/\s/g, ''),
+            price_per_km: parseFloat(price_per_km),
+            price_per_day: parseFloat(price_per_day),
+            imagePath: req.file ? `${req.file.filename}` : null
+        });
 
-//     } catch (error) {
-//         console.error("Error adding guide:", error);
-//         req.flash("error", "Server error occurred while adding the guide.");
-//         return res.redirect("/addcabform");
-//     }
-// };
+        req.flash("success", "Cab added successfully");
+        return res.redirect("/addcabform"); // Redirect to cab listing page
+
+    } catch (error) {
+        console.error("Error adding cab:", error);
+        req.flash("error", error.message || "Failed to add cab");
+        return res.redirect("/addcabform");
+    }
+};
+
+export const getAllCabs = async (req, res) => {
+    try {
+        const admin = req.session.admin;
+
+        const allCabs = await CabModel.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.render("AdminView/cablist", {
+            admin,
+            cabs: allCabs,
+            success: req.flash("success"),
+            error: req.flash("error")
+        });
+    } catch (error) {
+        console.error("Error fetching cabs:", error);
+        req.flash("error", "Unable to fetch cab list");
+        return res.redirect("/dashboard");
+    }
+};
+
 
 // _~~~Guide management~~~__
 
@@ -401,7 +440,7 @@ export const addGuide = async (req, res) => {
 
         const profileImage = req.file ? req.file.filename : null;
 
-        const newGuide = await GuideMoel.create({
+        const newGuide = await GuideModel.create({
             guidename,
             gender,
             email,
@@ -424,6 +463,231 @@ export const addGuide = async (req, res) => {
         return res.redirect("/addguideform");
     }
 };
+
+export const getAllGuides = async (req, res) => {
+    try {
+        const admin = req.session.admin;
+        const guides = await GuideModel.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.render('AdminView/guidelist', {
+            admin,
+            guides,
+            success: req.flash('success'),
+            error: req.flash('error')
+        });
+    } catch (error) {
+        console.error("Error fetching guides:", error);
+        req.flash("error", "Failed to fetch guide list.");
+        return res.redirect('/dashboard');
+    }
+};
+
+
+// Driver Management
+
+export const addDriverForm = async (req, res) => {
+    try {
+        const admin = req.session.admin;
+        return res.render("AdminView/adddriver", { admin });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const addDriver = async (req, res) => {
+    try {
+        // Required fields
+        const requiredFields = [
+            'name', 'licenseNumber', 'licenseExpiry',
+            'phone', 'city', 'state', 'country'
+        ];
+
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+
+        if (missingFields.length > 0) {
+            req.flash('error', `Missing required fields: ${missingFields.join(', ')}`);
+            return res.redirect('/driver/addform');
+        }
+
+        // Expiry date check
+        const licenseExpiry = new Date(req.body.licenseExpiry);
+        if (licenseExpiry < new Date()) {
+            req.flash('error', 'License has already expired');
+            return res.redirect('/driver/addform');
+        }
+
+        // Check duplicate license or phone
+        const existingDriver = await DriverModel.findOne({
+            where: {
+                [Op.or]: [
+                    { licenseNumber: req.body.licenseNumber },
+                    { phone: req.body.phone }
+                ]
+            }
+        });
+
+        if (existingDriver) {
+            const conflicts = [];
+            if (existingDriver.licenseNumber === req.body.licenseNumber) {
+                conflicts.push('license number');
+            }
+            if (existingDriver.phone === req.body.phone) {
+                conflicts.push('phone number');
+            }
+            req.flash('error', `Driver with this ${conflicts.join(' and ')} already exists`);
+            return res.redirect('/driver/addform');
+        }
+
+        // Save new driver
+        await DriverModel.create({
+            name: req.body.name,
+            licenseNumber: req.body.licenseNumber,
+            licenseExpiry: req.body.licenseExpiry,
+            phone: req.body.phone,
+            email: req.body.email || null,
+            address: req.body.address || null,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            pincode: req.body.pincode || null,
+            experienceYears: req.body.experienceYears || 0,
+            isAvailable: req.body.isAvailable !== undefined ? req.body.isAvailable : true,
+            rating: 0.0,
+            profilePhoto: req.file ? req.file.filename : null,
+            aadharNumber: req.body.aadharNumber || null,
+            panNumber: req.body.panNumber || null,
+            bloodGroup: req.body.bloodGroup || null,
+            emergencyContact: req.body.emergencyContact || null,
+            isActive: true
+        });
+
+        req.flash('success', 'Driver added successfully');
+        return res.redirect('/driver/addform');
+
+    } catch (error) {
+        console.error('Error adding driver:', error);
+        req.flash('error', 'Something went wrong while adding the driver');
+        return res.redirect('/driver/addform');
+    }
+};
+
+export const getAllDrivers = async (req, res) => {
+    try {
+        const admin = req.session.admin;
+        const drivers = await DriverModel.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.render('AdminView/driverlist', {
+            admin,
+            drivers,
+            success: req.flash('success'),
+            error: req.flash('error')
+        });
+    } catch (error) {
+        console.error('Error fetching drivers:', error);
+        req.flash('error', 'Unable to fetch driver list');
+        return res.redirect('/dashboard');
+    }
+};
+
+
+
+async function assignToCab(cabId, driverId, guideId, assignmentType) {
+    const cab = await CabModel.findByPk(cabId);
+    if (!cab) throw new Error('Cab not found');
+
+    if (assignmentType === 'driver' && !driverId) {
+        throw new Error('Driver ID required');
+    }
+
+    if (assignmentType === 'guide-as-driver') {
+        const guide = await GuideModel.findByPk(guideId);
+        if (!guide || !guide.canDrive) {
+            throw new Error('This guide cannot drive');
+        }
+    }
+
+    if (assignmentType === 'both') {
+        if (!driverId || !guideId) throw new Error('Both Driver and Guide are required');
+    }
+
+    return await CabAssignmentModel.create({
+        cabId,
+        driverId: driverId || null,
+        guideId: guideId || null,
+        assignmentType
+    });
+}
+
+// Form GET
+export const cabAssignment = async (req, res) => {
+    const admin = req.session.admin;
+    const cabs = await CabModel.findAll();
+    const drivers = await DriverModel.findAll();
+    const guides = await GuideModel.findAll();
+
+    res.render('AdminView/assigncab', {
+        admin,
+        cabs,
+        drivers,
+        guides,
+        success: req.flash('success'),
+        error: req.flash('error')
+    });
+};
+
+// Form POST
+export const updateCabAssignTo = async (req, res) => {
+    try {
+        const { cabId, driverId, guideId, assignmentType } = req.body;
+
+        console.log("Form Data:", req.body);
+
+        if (!cabId || !assignmentType) {
+            req.flash("error", "Cab ID and assignment type are required");
+            return res.redirect("/cab/assign/form");
+        }
+
+        await assignToCab(cabId, driverId, guideId, assignmentType);
+
+        await CabModel.update(
+            { hasDedicatedDriver: assignmentType !== 'guide-as-driver' },
+            { where: {cabId} }
+        );
+
+        req.flash("success", "Cab assignment successful");
+        return res.redirect("/cab/assign/form");
+
+    } catch (err) {
+        console.error("Assignment error:", err);
+        req.flash("error", err.message);
+        res.redirect("/cab/assign/form");
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -504,7 +768,7 @@ export const addFAQs = async (req, res) => {
             answer: answer[i],
         }));
 
-        await FAQ.bulkCreate(faqData);
+        await FAQModel.bulkCreate(faqData);
 
         req.flash("success", "FAQs added successfully.");
         return res.redirect("/faq/addform");
@@ -592,6 +856,8 @@ export const listBlogs = async (req, res) => {
         return res.redirect("/dashboard");
     }
 };
+
+
 
 
 

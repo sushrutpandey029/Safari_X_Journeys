@@ -32,11 +32,55 @@
             </a>
             <ul id="cab-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                 <li><a href="/addcabform"><i class="bi bi-circle"></i><span>Add Cab</span></a></li>
-                <li><a href="/cabs"><i class="bi bi-circle"></i><span>View Cabs</span></a></li>
+                <li><a href="/cab/list"><i class="bi bi-circle"></i><span>View Cabs</span></a></li>
             </ul>
         </li>
 
-      
+        <!-- Driver Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#drv-management" role="button"
+                aria-expanded="false" aria-controls="cab-management">
+                <i class="bi bi-wallet"></i>
+                <span>Driver Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="drv-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/driver/addform"><i class="bi bi-circle"></i><span>Add Driver</span></a></li>
+                <li><a href="/driver/list"><i class="bi bi-circle"></i><span>View Drivers</span></a></li>
+            </ul>
+        </li>
+
+
+        <!-- Guide Management Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#guide-management" role="button"
+                aria-expanded="false" aria-controls="guide-management">
+                <i class="bi bi-wallet"></i>
+                <span>Guide Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="guide-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/addguideform"><i class="bi bi-circle"></i><span>Add Guide</span></a></li>
+                <li><a href="/guide/list"><i class="bi bi-circle"></i><span>View Guides</span></a></li>
+            </ul>
+        </li>  
+
+         <!-- CAB Assign -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#assign-management" role="button"
+                aria-expanded="false" aria-controls="assign-management">
+                <i class="bi bi-wallet"></i>
+                <span>Cab Assign Management</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="assign-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li><a href="/cab/assign/form"><i class="bi bi-circle"></i><span>Assign Cab</span></a></li>
+                <li><a href="/guide/list"><i class="bi bi-circle"></i><span>View Guides</span></a></li>
+            </ul>
+        </li>  
+
+
+
 
         <!-- Banner Management Dropdown -->
         <li class="nav-item">
@@ -80,19 +124,7 @@
             </ul>
         </li>
 
-        <!-- Guide Management Dropdown -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#guide-management" role="button"
-                aria-expanded="false" aria-controls="guide-management">
-                <i class="bi bi-wallet"></i>
-                <span>Guide Management</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="guide-management" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                <li><a href="/addguideform"><i class="bi bi-circle"></i><span>Add Guide</span></a></li>
-                <li><a href="/guides"><i class="bi bi-circle"></i><span>View Guides</span></a></li>
-            </ul>
-        </li>
+
 
         <!-- Logout -->
         <li class="nav-item">

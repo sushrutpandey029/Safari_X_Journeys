@@ -1,0 +1,115 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Add Driver</h1>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-8">
+        {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+        {{/if}}
+        {{#if success}}
+        <div class="alert alert-success">{{success}}</div>
+        {{/if}}
+
+        <form action="/driver/add" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="name" class="form-label">Driver Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{formData.name}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="licenseNumber" class="form-label">License Number</label>
+            <input type="text" class="form-control" id="licenseNumber" name="licenseNumber" value="{{formData.licenseNumber}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="licenseExpiry" class="form-label">License Expiry Date</label>
+            <input type="date" class="form-control" id="licenseExpiry" name="licenseExpiry" value="{{formData.licenseExpiry}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="{{formData.phone}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{formData.email}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{formData.address}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{formData.city}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="{{formData.state}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="{{formData.country}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input type="text" class="form-control" id="pincode" name="pincode" value="{{formData.pincode}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="experienceYears" class="form-label">Experience (Years)</label>
+            <input type="number" class="form-control" id="experienceYears" name="experienceYears" value="{{formData.experienceYears}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="aadharNumber" class="form-label">Aadhar Number</label>
+            <input type="text" class="form-control" id="aadharNumber" name="aadharNumber" value="{{formData.aadharNumber}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="panNumber" class="form-label">PAN Number</label>
+            <input type="text" class="form-control" id="panNumber" name="panNumber" value="{{formData.panNumber}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="bloodGroup" class="form-label">Blood Group</label>
+            <input type="text" class="form-control" id="bloodGroup" name="bloodGroup" value="{{formData.bloodGroup}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="emergencyContact" class="form-label">Emergency Contact</label>
+            <input type="text" class="form-control" id="emergencyContact" name="emergencyContact" value="{{formData.emergencyContact}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="isAvailable" class="form-label">Availability</label>
+            <select class="form-control" id="isAvailable" name="isAvailable">
+              <option value="true" {{#if (eq formData.isAvailable "true")}}selected{{/if}}>Available</option>
+              <option value="false" {{#if (eq formData.isAvailable "false")}}selected{{/if}}>Not Available</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="profilePhoto" class="form-label">Profile Photo</label>
+            <input type="file" class="form-control" id="profilePhoto" name="profilePhoto" accept="image/*">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Add Driver</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+{{> adminfooter}}

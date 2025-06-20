@@ -4,46 +4,86 @@
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Add Cab</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                <li class="breadcrumb-item"><a href="/cabs">Cabs</a></li>
+                <li class="breadcrumb-item active">Add Cab</li>
+            </ol>
+        </nav>
     </div>
+
     <section class="section">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 {{#if error}}
-                <div class="alert alert-danger">{{error}}</div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{{error}}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
                 {{/if}}
-                <form action="/ceratecab" method="POST" enctype="multipart/form-data">
+                {{#if success}}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{{success}}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {{/if}}
 
-                    <div class="mb-3">
-                        <label for="cabtype" class="form-label">Cab Type</label>
-                        <input type="text" class="form-control" id="cabtype" name="cabtype">
-                    </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cab Details</h5>
 
-                    <div class="mb-3">
-                        <label for="cabseats" class="form-label">Cab Seats</label>
-                        <input type="number" class="form-control" id="cabseats" name="cabseats">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cabnumber" class="form-label">Cab Number</label>
-                        <input type="text" class="form-control" id="cabnumber" name="cabnumber">
-                    </div>
+                        <form action="/cab/add" method="POST" enctype="multipart/form-data" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="cabtype" class="form-label">Cab Type*</label>
+                                <select class="form-select" id="cabtype" name="cabtype" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Hatchback">Hatchback</option>
+                                    <option value="Sedan">Sedan</option>
+                                    <option value="SUV">SUV</option>
+                                    <option value="Luxury">Luxury</option>
+                                    <option value="Tempo Traveller">Tempo Traveller</option>
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="price_per_km" class="form-label">Price per KM</label>
-                        <input type="number" step="0.01" class="form-control" id="price_per_km" name="price_per_km">
-                    </div>
+                            <div class="col-md-6">
+                                <label for="cabseats" class="form-label">Seating Capacity*</label>
+                                <input type="number" class="form-control" id="cabseats" name="cabseats" 
+                                       min="2" max="20" required>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="price_per_day" class="form-label">Price per Day</label>
-                        <input type="number" step="0.01" class="form-control" id="price_per_day" name="price_per_day">
-                    </div>
+                            <div class="col-md-6">
+                                <label for="cabnumber" class="form-label">Cab Number*</label>
+                                <input type="text" class="form-control" id="cabnumber" name="cabnumber" 
+                                       placeholder="MH02AB1234" required>
+                                <div class="form-text">Format: StateCode 2Digit Number Letters 4Digit Number</div>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="images" class="form-label">Images (URLs, comma separated)</label>
-                        <input type="file" class="form-control" id="images" name="images">
-                    </div>
+                            <div class="col-md-6">
+                                <label for="price_per_km" class="form-label">Price per KM (₹)*</label>
+                                <input type="number" step="0.01" class="form-control" id="price_per_km" 
+                                       name="price_per_km" min="0" required>
+                            </div>
 
-                    <button type="submit" class="btn btn-primary">Add Cab</button>
-                </form>
+                            <div class="col-md-6">
+                                <label for="price_per_day" class="form-label">Price per Day (₹)*</label>
+                                <input type="number" step="0.01" class="form-control" id="price_per_day" 
+                                       name="price_per_day" min="0" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="image" class="form-label">Cab Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text">Max 5MB (JPEG, JPG, PNG, WEBP)</div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Add Cab</button>
+                                <button type="reset" class="btn btn-secondary">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

@@ -30,6 +30,10 @@ hbs.registerHelper('eq', function (a, b) {
     return a == b;
 });
 
+hbs.registerHelper('inc', function (value) {
+    return parseInt(value) + 1;
+});
+
 // ✅ Register Handlebars Partials
 app.set("views", path.join(__dirname, "View"));
 hbs.registerPartials(path.join(__dirname, "View", "Partials"));
@@ -42,9 +46,14 @@ app.use('/profile-images', express.static(path.join(__dirname, 'ProfileImages'))
 app.use('/banner/images', express.static('Public/banner/images'));
 app.use('/blog/images', express.static('Public/blog/images'));
 
+app.use('/cab/images', express.static('Public/uploads/cabs'));
+app.use('/driver/images', express.static('Public/uploads/drivers'));
+app.use('/guide/images', express.static('ProfileImages/guide'));
+
 // ✅ Body Parsers
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // ✅ Trust proxy for ngrok / production reverse proxy
 app.set("trust proxy", 1);
@@ -53,12 +62,14 @@ app.set("trust proxy", 1);
 app.use(cors({
     origin: [
         "http://localhost:3000", // React dev
-        "https://38f3-2401-4900-47fa-e5a5-edf2-b4f5-8d2d-9b59.ngrok-free.app" // ngrok (replace this if using it)
+        "https://38f3-2401-4900-47fa-e5a5-edf2-b4f5-8d2d-9b59.ngrok-free.app",
+        "http://localhost:3001", // ngrok (replace this if using it)
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
+
 
 // Session Store
 const sessionStore = new MySQLStore({

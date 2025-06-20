@@ -2,15 +2,17 @@ import express from 'express';
 import upload from '../Middlewares/fileupload/multerConfig.js';
 import uploadCabImage from '../Middlewares/fileupload/cabMulterConfig.js'
 import bannerimage from '../Middlewares/fileupload/bannerMulterConfig.js'  
-import uploadBlog from '../Middlewares/fileupload/blogMulterConfig.js'
+import uploadBlog from '../Middlewares/fileupload/blogMulterConfig.js';
+import uploadDriverPhoto from '../Middlewares/fileupload/driverUpload.js'
 
 import { AdminRegister, renderdashbord,AdminLogin,
     AdminLogout,AdminProfile,
     updateAdminProfile,AdminChangePassword,
     renderAdminLogin,renderChangePassword,
-    renderUserList,deleteUser,addcabform,addguideform,addGuide,
+    renderUserList,deleteUser,addcabform,addCab,addguideform,addGuide,
     addbannerform,addBanner,getAllBanners,
-    addFaqForm,addFAQs,listFAQs,addBlogForm,addBlogs,listBlogs
+    addFaqForm,addFAQs,listFAQs,addBlogForm,addBlogs,listBlogs,
+    addDriver,addDriverForm,getAllCabs,getAllDrivers,getAllGuides,cabAssignment,updateCabAssignTo
 
 } from "../Controllers/Admin_Controller.js";
 
@@ -39,12 +41,30 @@ router.delete('/users/:id', deleteUser);
 // __Cab Routes__
 
 router.get('/addcabform',isAdminLoggedIn, addcabform);
-// router.post('/ceratecab', uploadCabImage, addCab);
+router.post('/cab/add', uploadCabImage, addCab);
+router.get('/cab/list', getAllCabs);
+
+// Driver routes
+router.get('/driver/addform', addDriverForm);
+router.post('/driver/add',uploadDriverPhoto, addDriver);
+router.get('/driver/list', getAllDrivers);
+
+router.get('/cab/assign/form', cabAssignment);
+router.post('/cab/assign/to', updateCabAssignTo);
+
+
+
 
 // __Guide Routes__
 
 router.get('/addguideform',isAdminLoggedIn, addguideform);
 router.post('/submitguide', upload.single('profileimages'),addGuide);
+router.get('/guide/list', getAllGuides);
+
+
+
+
+
 
 
 // Frontend UserViews Routes

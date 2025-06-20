@@ -1,0 +1,78 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Assign Cab</h1>
+    </div>
+
+    {{#if error}}
+    <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
+    {{#if success}}
+    <div class="alert alert-success">{{success}}</div>
+    {{/if}}
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-8">
+                <form action="/cab/assign/to" method="POST">
+                    <div class="mb-3">
+                        <label for="cabId" class="form-label">Select Cab</label>
+                        <select class="form-control" id="cabId" name="cabId" required>
+                            <option value="">-- Select Cab --</option>
+                            {{#each cabs}}
+                            <option value="{{this.cabId}}">{{this.cabnumber}} - {{this.cabtype}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="assignmentType" class="form-label">Assignment Type</label>
+                        <select class="form-control" id="assignmentType" name="assignmentType" required
+                            onchange="toggleFields()">
+                            <option value="">-- Select Type --</option>
+                            <option value="driver">Only Driver</option>
+                            <option value="guide-as-driver">Guide as Driver</option>
+                            <option value="both">Driver & Guide</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="driverField" style="display: none;">
+                        <label for="driverId" class="form-label">Select Driver</label>
+                        <select class="form-control" id="driverId" name="driverId">
+                            <option value="">-- Select Driver --</option>
+                            {{#each drivers}}
+                            <option value="{{this.driverId}}">{{this.name}} ({{this.phone}})</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="guideField" style="display: none;">
+                        <label for="guideId" class="form-label">Select Guide</label>
+                        <select class="form-control" id="guideId" name="guideId">
+                            <option value="">-- Select Guide --</option>
+                            {{#each guides}}
+                            {{#if this.canDrive}}
+                            <option value="{{this.guideId}}">{{this.guidename}}</option>
+                            {{/if}}
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Assign</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    function toggleFields() {
+        const type = document.getElementById('assignmentType').value;
+        document.getElementById('driverField').style.display = (type === 'driver' || type === 'both') ? 'block' : 'none';
+        document.getElementById('guideField').style.display = (type === 'guide-as-driver' || type === 'both') ? 'block' : 'none';
+    }
+</script>
+
+{{> adminfooter}}

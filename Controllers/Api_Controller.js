@@ -7,28 +7,139 @@ import nodemailer from "nodemailer";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+export const registerOrLogin = async (req, res) => {
+    try {
+        const { fullname, phonenumber, emailid, password } = req.body;
+
+        // Email is required in both flows
+        if (!emailid) {
+            return res.status(401).json({
+                success: false,
+                message: "Emailid is required"
+            });
+        }
+
+        console.log('emailid',req.body)
+
+        // Validate email format
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!emailRegex.test(emailid)) {
+            return res.status(401).json({ message: "Invalid email format" });
+        }
+
+        // Check if email already exists
+        const user = await users.findOne({ where: { emailid } });
+
+        // CASE 1: Email exists → LOGIN FLOW
+        if (user) {
+            if (!password) {
+                return res.status(401).json({
+                    success: false,
+                    userExists: true,
+                    message: "Password is required to login"
+                });
+            }
+
+            const isValid = await bcrypt.compare(password, user.password);
+            if (!isValid) {
+                return res.status(401).json({ message: "Invalid password" });
+            }
+
+            // Generate tokens
+            const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+
+            user.refreshToken = refreshToken;
+            await user.save();
+
+            // Save session
+            req.session.user = {
+                id: user.id,
+                fullname: user.fullname,
+                emailid: user.emailid,
+                phonenumber: user.phonenumber,
+                refreshToken,
+                token
+            };
+
+            return res.status(201).json({
+                status: true,
+                message: "Login successful",
+                token,
+                refreshToken,
+                user: req.session.user
+            });
+        }
+
+        // CASE 2: Email not found → REGISTRATION FLOW
+        // All fields are required now
+        const missingFields = [];
+        if (!fullname) missingFields.push("fullname");
+        if (!phonenumber) missingFields.push("phonenumber");
+        if (!password) missingFields.push("password");
+
+        if (missingFields.length > 0) {
+            return res.status(401).json({
+                success: false,
+                userExists: false,
+                message: `Missing fields for registration: ${missingFields.join(", ")}`
+            });
+        }
+
+        // Hash password & register
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await users.create({
+            fullname,
+            phonenumber,
+            emailid,
+            password: hashedPassword
+        });
+
+        return res.status(201).json({
+            status: true,
+            message: "Registration successful",
+            user: {
+                id: newUser.id,
+                fullname: newUser.fullname,
+                phonenumber: newUser.phonenumber,
+                emailid: newUser.emailid
+            }
+        });
+
+    } catch (error) {
+        console.error("Auth error:", error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
 // export const registerOrLogin = async (req, res) => {
 //     try {
 //         const { fullname, phonenumber, emailid, password } = req.body;
 
-//         // Email is required in both flows
-//         if (!emailid) {
+//         if (!emailid && !phonenumber) {
 //             return res.status(401).json({
 //                 success: false,
-//                 message: "Emailid is required"
+//                 message: "Email ID or Phone Number is required",
 //             });
 //         }
 
-//         // Validate email format
-//         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-//         if (!emailRegex.test(emailid)) {
-//             return res.status(401).json({ message: "Invalid email format" });
+//         // Validate email format if email is provided
+//         if (emailid) {
+//             const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//             if (!emailRegex.test(emailid)) {
+//                 return res.status(401).json({ message: "Invalid email format" });
+//             }
 //         }
 
-//         // Check if email already exists
-//         const user = await users.findOne({ where: { emailid } });
+//         // Check if user exists with email or phone number
+//         const whereClause = emailid
+//             ? { emailid }
+//             : { phonenumber };
 
-//         // CASE 1: Email exists → LOGIN FLOW
+//         const user = await users.findOne({ where: whereClause });
+
+//         // CASE 1: LOGIN FLOW
 //         if (user) {
 //             if (!password) {
 //                 return res.status(401).json({
@@ -49,7 +160,6 @@ import jwt from 'jsonwebtoken';
 //             user.refreshToken = refreshToken;
 //             await user.save();
 
-//             // Save session
 //             req.session.user = {
 //                 id: user.id,
 //                 fullname: user.fullname,
@@ -68,11 +178,11 @@ import jwt from 'jsonwebtoken';
 //             });
 //         }
 
-//         // CASE 2: Email not found → REGISTRATION FLOW
-//         // All fields are required now
+//         // CASE 2: REGISTRATION FLOW
 //         const missingFields = [];
 //         if (!fullname) missingFields.push("fullname");
 //         if (!phonenumber) missingFields.push("phonenumber");
+//         if (!emailid) missingFields.push("emailid");
 //         if (!password) missingFields.push("password");
 
 //         if (missingFields.length > 0) {
@@ -107,112 +217,6 @@ import jwt from 'jsonwebtoken';
 //         res.status(500).json({ message: 'Server error', error: error.message });
 //     }
 // };
-
-
-export const registerOrLogin = async (req, res) => {
-    try {
-        const { fullname, phonenumber, emailid, password } = req.body;
-
-        if (!emailid && !phonenumber) {
-            return res.status(401).json({
-                success: false,
-                message: "Email ID or Phone Number is required",
-            });
-        }
-
-        // Validate email format if email is provided
-        if (emailid) {
-            const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            if (!emailRegex.test(emailid)) {
-                return res.status(401).json({ message: "Invalid email format" });
-            }
-        }
-
-        // Check if user exists with email or phone number
-        const whereClause = emailid
-            ? { emailid }
-            : { phonenumber };
-
-        const user = await users.findOne({ where: whereClause });
-
-        // CASE 1: LOGIN FLOW
-        if (user) {
-            if (!password) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Password is required to login"
-                });
-            }
-
-            const isValid = await bcrypt.compare(password, user.password);
-            if (!isValid) {
-                return res.status(401).json({ message: "Invalid password" });
-            }
-
-            // Generate tokens
-            const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-            const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-
-            user.refreshToken = refreshToken;
-            await user.save();
-
-            req.session.user = {
-                id: user.id,
-                fullname: user.fullname,
-                emailid: user.emailid,
-                phonenumber: user.phonenumber,
-                refreshToken,
-                token
-            };
-
-            return res.status(201).json({
-                status: true,
-                message: "Login successful",
-                token,
-                refreshToken,
-                user: req.session.user
-            });
-        }
-
-        // CASE 2: REGISTRATION FLOW
-        const missingFields = [];
-        if (!fullname) missingFields.push("fullname");
-        if (!phonenumber) missingFields.push("phonenumber");
-        if (!emailid) missingFields.push("emailid");
-        if (!password) missingFields.push("password");
-
-        if (missingFields.length > 0) {
-            return res.status(401).json({
-                success: false,
-                message: `Missing fields for registration: ${missingFields.join(", ")}`
-            });
-        }
-
-        // Hash password & register
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await users.create({
-            fullname,
-            phonenumber,
-            emailid,
-            password: hashedPassword
-        });
-
-        return res.status(201).json({
-            status: true,
-            message: "Registration successful",
-            user: {
-                id: newUser.id,
-                fullname: newUser.fullname,
-                phonenumber: newUser.phonenumber,
-                emailid: newUser.emailid
-            }
-        });
-
-    } catch (error) {
-        console.error("Auth error:", error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
 
 export const UserLogout = async (req, res) => {
     try {
@@ -433,12 +437,12 @@ export const listBlogs = async (req, res) => {
     }
 };
 
-export const sendMailToAdmin = async (req, res) => {
+export const contactUs = async (req, res) => {
     try {
-        const { name, email, message } = req.body;
+        const { firstname, lastname, phonenumber, email, place, message} = req.body;
 
         // Validate input
-        if (!name || !email || !message) {
+        if (!firstname || !lastname || !message || !email) {
             return res.status(400).json({
                 success: false,
                 message: "Name, email, and message are required"
@@ -465,8 +469,8 @@ export const sendMailToAdmin = async (req, res) => {
 
         // Email options
         const mailOptions = {
-            from: `"${name}" <${email}>`,
-            to: 'zebashaifi@gmail.com', // Admin's email
+            from: `"${firstname} ${lastname}" <${email}>`,
+            to: 'tomharry192999@gmail.com',
             subject: `Hello Admin - Message from ${name}`,
             text: message
         };
@@ -488,6 +492,8 @@ export const sendMailToAdmin = async (req, res) => {
         });
     }
 };
+
+
 
 
 

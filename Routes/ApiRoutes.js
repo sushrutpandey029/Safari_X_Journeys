@@ -2,7 +2,7 @@ import express from 'express'
 const ApiRoute = express.Router();
 
 import { registerOrLogin, UserLogout, userchangepassword, userUpdateProfile, getuserprofile,
-    getAllBanners,listFAQs,listBlogs
+    getAllBanners,listFAQs,listBlogs,contactUs
  } from '../Controllers/Api_Controller.js'
 
 import { isAuthenticated } from '../Middlewares/isAuthenticated.js'
@@ -18,6 +18,13 @@ ApiRoute.get('/banner/image', getAllBanners);
 ApiRoute.get('/FAQ/list', listFAQs);
 
 ApiRoute.get('/Blog/list', listBlogs);
+
+ApiRoute.post('/send/Contactus', contactUs);
+
+
+
+
+
 
 
 

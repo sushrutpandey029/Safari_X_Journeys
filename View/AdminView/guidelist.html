@@ -1,0 +1,71 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Guide List</h1>
+    </div>
+
+    {{#if error}}
+    <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
+
+    {{#if success}}
+    <div class="alert alert-success">{{success}}</div>
+    {{/if}}
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Languages</th>
+                                    <th>Experience</th>
+                                    <th>Location</th>
+                                    <th>Available</th>
+                                    <th>Image</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each guides}}
+                                <tr>
+                                    <td>{{inc @index}}</td>
+                                    <td>{{this.guidename}}</td>
+                                    <td>{{this.gender}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>{{this.phonenumber}}</td>
+                                    <td>{{this.languagespoken}}</td>
+                                    <td>{{this.experience_years}} years</td>
+                                    <td>{{this.city}}, {{this.state}}, {{this.country}}</td>
+                                    <td>{{#if this.availability}}Yes{{else}}No{{/if}}</td>
+                                    <td>
+                                        {{#if this.profile_image}}
+                                        <img src="/guide/images/{{this.profile_image}}" width="60" height="50" />
+                                        {{else}}N/A{{/if}}
+                                    </td>
+                                    <td>{{this.createdAt}}</td>
+                                </tr>
+                                {{else}}
+                                <tr>
+                                    <td colspan="11" class="text-center">No guides found</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{{> adminfooter}}
