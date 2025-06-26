@@ -1,12 +1,17 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// Convert `import.meta.url` to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define destination folder
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = 'Uploads/ProfileImages/guide';
-        fs.mkdirSync(uploadPath, { recursive: true }); // make sure folder exists
+        const uploadPath = path.join(__dirname, '../../Public/uploads/guides');
+        fs.mkdirSync(uploadPath, { recursive: true }); // Ensure directory exists
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
@@ -32,7 +37,7 @@ const fileFilter = function (req, file, cb) {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 10 * 1024 * 1024 } // limit to 2MB
+    limits: { fileSize: 10 * 1024 * 1024 } // limit to 10MB
 });
 
 export default upload;

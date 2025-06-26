@@ -8,6 +8,11 @@ const Driver = sequelize.define('drivers', {
         autoIncrement: true,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        defaultValue: "driver",
+    },
     name: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -27,6 +32,10 @@ const Driver = sequelize.define('drivers', {
     email: {
         type: DataTypes.STRING(100),
         allowNull: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     address: {
         type: DataTypes.TEXT,

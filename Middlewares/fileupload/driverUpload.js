@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = path.join(__dirname, '../../public/uploads/drivers');
+        const uploadPath = path.join(__dirname, '../../Public/uploads/drivers');
         fs.mkdirSync(uploadPath, { recursive: true });
         cb(null, uploadPath);
     },

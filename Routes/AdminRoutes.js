@@ -1,9 +1,10 @@
 import express from 'express';
 import upload from '../Middlewares/fileupload/multerConfig.js';
-import uploadCabImage from '../Middlewares/fileupload/cabMulterConfig.js'
-import bannerimage from '../Middlewares/fileupload/bannerMulterConfig.js'  
+import uploadCabImage from '../Middlewares/fileupload/cabMulterConfig.js';
+import bannerimage from '../Middlewares/fileupload/bannerMulterConfig.js'; 
 import uploadBlog from '../Middlewares/fileupload/blogMulterConfig.js';
-import uploadDriverPhoto from '../Middlewares/fileupload/driverUpload.js'
+import uploadDriverPhoto from '../Middlewares/fileupload/driverUpload.js';
+import uploadTestimonial from '../Middlewares/fileupload/testimonialMulterConfig.js';
 
 import { AdminRegister, renderdashbord,AdminLogin,
     AdminLogout,AdminProfile,
@@ -12,7 +13,9 @@ import { AdminRegister, renderdashbord,AdminLogin,
     renderUserList,deleteUser,addcabform,addCab,addguideform,addGuide,
     addbannerform,addBanner,getAllBanners,
     addFaqForm,addFAQs,listFAQs,addBlogForm,addBlogs,listBlogs,
-    addDriver,addDriverForm,getAllCabs,getAllDrivers,getAllGuides,cabAssignment,updateCabAssignTo
+    addDriver,addDriverForm,getAllCabs,
+    getAllDrivers,getAllGuides,cabAssignment,
+    updateCabAssignTo,getAllAssignCab,addTestimonial,addTestimonialForm,getTestimonialsList,deleteTestimonial
 
 } from "../Controllers/Admin_Controller.js";
 
@@ -51,6 +54,8 @@ router.get('/driver/list', getAllDrivers);
 
 router.get('/cab/assign/form', cabAssignment);
 router.post('/cab/assign/to', updateCabAssignTo);
+router.get('/cab/assign/list', getAllAssignCab);
+
 
 
 
@@ -72,15 +77,19 @@ router.get('/banner/addform',addbannerform);
 router.post("/banner/add", bannerimage.array("bannerimage[]",10), addBanner);
 router.get('/banner/list',getAllBanners);
 
-
 router.get('/faq/addform',addFaqForm);
 router.post('/faq/add',addFAQs);
 router.get('/faq/list',listFAQs);
 
-
 router.get('/blog/addform',addBlogForm);
 router.post('/blog/add',uploadBlog.array("image[]"),addBlogs);
 router.get('/blog/list',listBlogs);
+
+router.get('/testimonial/addform',addTestimonialForm);
+router.post('/testimonial/add',uploadTestimonial.array("image[]"),addTestimonial);
+router.get('/testimonial/list',getTestimonialsList);
+router.post('/testimonial/delete/:id',deleteTestimonial);
+
 
 
 export default router;

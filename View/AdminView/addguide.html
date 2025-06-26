@@ -26,9 +26,9 @@
             <label for="gender" class="form-label">Gender</label>
             <select class="form-control" id="gender" name="gender">
               <option value="">-- Select Gender --</option>
-              <option value="Male" {{#if (eq formData.gender "Male")}}selected{{/if}}>Male</option>
-              <option value="Female" {{#if (eq formData.gender "Female")}}selected{{/if}}>Female</option>
-              <option value="Other" {{#if (eq formData.gender "Other")}}selected{{/if}}>Other</option>
+              <option value="Male" {{#if (eq formData.gender "Male" )}}selected{{/if}}>Male</option>
+              <option value="Female" {{#if (eq formData.gender "Female" )}}selected{{/if}}>Female</option>
+              <option value="Other" {{#if (eq formData.gender "Other" )}}selected{{/if}}>Other</option>
             </select>
           </div>
 
@@ -38,18 +38,26 @@
           </div>
 
           <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" value="{{formData.email}}">
+          </div>
+
+          <div class="mb-3">
             <label for="phonenumber" class="form-label">Phone Number</label>
-            <input type="text" class="form-control" id="phonenumber" name="phonenumber" value="{{formData.phonenumber}}">
+            <input type="text" class="form-control" id="phonenumber" name="phonenumber"
+              value="{{formData.phonenumber}}">
           </div>
 
           <div class="mb-3">
             <label for="languagespoken" class="form-label">Languages Spoken</label>
-            <input type="text" class="form-control" id="languagespoken" name="languagespoken" value="{{formData.languagespoken}}">
+            <input type="text" class="form-control" id="languagespoken" name="languagespoken"
+              value="{{formData.languagespoken}}">
           </div>
 
           <div class="mb-3">
             <label for="experience_years" class="form-label">Experience (in years)</label>
-            <input type="number" class="form-control" id="experience_years" name="experience_years" value="{{formData.experience_years}}">
+            <input type="number" class="form-control" id="experience_years" name="experience_years"
+              value="{{formData.experience_years}}">
           </div>
 
           <div class="mb-3">
@@ -70,8 +78,8 @@
           <div class="mb-3">
             <label for="availability" class="form-label">Availability</label>
             <select class="form-control" id="availability" name="availability">
-              <option value="true" {{#if (eq formData.availability "true")}}selected{{/if}}>Available</option>
-              <option value="false" {{#if (eq formData.availability "false")}}selected{{/if}}>Not Available</option>
+              <option value="true" {{#if (eq formData.availability "true" )}}selected{{/if}}>Available</option>
+              <option value="false" {{#if (eq formData.availability "false" )}}selected{{/if}}>Not Available</option>
             </select>
           </div>
 

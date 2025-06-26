@@ -8,6 +8,11 @@ const Guide = sequelize.define('guides', {
         autoIncrement: true,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        defaultValue: "guide",
+    },
     guidename: {
         type: DataTypes.STRING,
         allowNull: false
@@ -19,6 +24,10 @@ const Guide = sequelize.define('guides', {
     email: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     phonenumber: {
         type: DataTypes.STRING,

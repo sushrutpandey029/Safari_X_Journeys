@@ -1,0 +1,78 @@
+{{> adminheader admin=admin}}
+{{> adminsidebar}}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Add Testimonials</h1>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-8">
+
+                {{#if error}}
+                <div class="alert alert-danger">{{error}}</div>
+                {{/if}}
+                {{#if success}}
+                <div class="alert alert-success">{{success}}</div>
+                {{/if}}
+
+                <form action="/testimonial/add" method="POST" enctype="multipart/form-data">
+                    <div id="testimonialRepeater">
+                        <div class="testimonial-group mb-4 border p-3 rounded">
+
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" name="image[]" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name[]" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-control" name="description[]" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Rating (1 to 5)</label>
+                                <input type="number" class="form-control" name="rating[]" min="1" max="5" required>
+                            </div>
+
+                            <button type="button" class="btn btn-danger remove-testimonial">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="addTestimonialBtn" class="btn btn-secondary mb-3">+ Add More</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit Testimonials</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const container = document.getElementById("testimonialRepeater");
+    const addBtn = document.getElementById("addTestimonialBtn");
+
+    addBtn.addEventListener("click", () => {
+        const clone = container.firstElementChild.cloneNode(true);
+        clone.querySelectorAll("input").forEach(field => field.value = "");
+        container.appendChild(clone);
+    });
+
+    container.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-testimonial")) {
+            if (container.childElementCount > 1) {
+                e.target.closest(".testimonial-group").remove();
+            } else {
+                alert("At least one testimonial is required.");
+            }
+        }
+    });
+</script>
+
+{{> adminfooter}}

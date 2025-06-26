@@ -3,16 +3,21 @@ import bcrypt from 'bcrypt';
 import { Op, Sequelize } from 'sequelize';
 import AdminModel from '../Models/AdminModel/Admin_Model.js';
 
+import { encrypt } from '../Utils/encryption.js';
+
 import CabModel from '../Models/AdminModel/CabModel.js';
 import DriverModel from '../Models/AdminModel/DriverModel.js';
 import GuideModel from '../Models/AdminModel/GuideModel.js';
-import CabAssignmentModel from '../Models/AdminModel/CabAssignmentModel.js'
+import CabAssignment from '../Models/AdminModel/CabAssignmentModel.js'
+import TestimonialsModel from '../Models/AdminModel/TestimonialModel.js';
 
 import BannerModel from '../Models/AdminModel/BannerModel.js'
 import users from '../Models/ApiModel/UserModel.js';
 import FAQModel from '../Models/AdminModel/FAQModel.js';
 import BlogModel from '../Models/AdminModel/BlogModel.js';
 import path from 'path';
+import Guide from '../Models/AdminModel/GuideModel.js';
+import Driver from '../Models/AdminModel/DriverModel.js';
 
 export const AdminRegister = async (req, res) => {
     try {
@@ -413,6 +418,7 @@ export const addGuide = async (req, res) => {
             guidename,
             gender,
             email,
+            password,
             phonenumber,
             languagespoken,
             experience_years,
@@ -426,6 +432,7 @@ export const addGuide = async (req, res) => {
         if (!guidename) missingFields.push("guidename");
         if (!gender) missingFields.push("gender");
         if (!email) missingFields.push("email");
+        if (!password) missingFields.push("password"); // ✅ validate password
         if (!phonenumber) missingFields.push("phonenumber");
         if (!languagespoken) missingFields.push("languagespoken");
         if (experience_years === undefined) missingFields.push("experience_years");
@@ -438,12 +445,14 @@ export const addGuide = async (req, res) => {
             return res.redirect("/addguideform");
         }
 
+        const encryptedPassword = encrypt(password); // ✅ Encrypt password
         const profileImage = req.file ? req.file.filename : null;
 
         const newGuide = await GuideModel.create({
             guidename,
             gender,
             email,
+            password: encryptedPassword, // ✅ Save encrypted password
             phonenumber,
             languagespoken,
             experience_years,
@@ -484,7 +493,6 @@ export const getAllGuides = async (req, res) => {
     }
 };
 
-
 // Driver Management
 
 export const addDriverForm = async (req, res) => {
@@ -498,6 +506,8 @@ export const addDriverForm = async (req, res) => {
 
 export const addDriver = async (req, res) => {
     try {
+
+        const encryptedPassword = encrypt(req.body.password);
         // Required fields
         const requiredFields = [
             'name', 'licenseNumber', 'licenseExpiry',
@@ -547,6 +557,7 @@ export const addDriver = async (req, res) => {
             licenseExpiry: req.body.licenseExpiry,
             phone: req.body.phone,
             email: req.body.email || null,
+            password: encryptedPassword,
             address: req.body.address || null,
             city: req.body.city,
             state: req.body.state,
@@ -593,8 +604,6 @@ export const getAllDrivers = async (req, res) => {
     }
 };
 
-
-
 async function assignToCab(cabId, driverId, guideId, assignmentType) {
     const cab = await CabModel.findByPk(cabId);
     if (!cab) throw new Error('Cab not found');
@@ -620,9 +629,8 @@ async function assignToCab(cabId, driverId, guideId, assignmentType) {
         guideId: guideId || null,
         assignmentType
     });
-}
+};
 
-// Form GET
 export const cabAssignment = async (req, res) => {
     const admin = req.session.admin;
     const cabs = await CabModel.findAll();
@@ -639,7 +647,6 @@ export const cabAssignment = async (req, res) => {
     });
 };
 
-// Form POST
 export const updateCabAssignTo = async (req, res) => {
     try {
         const { cabId, driverId, guideId, assignmentType } = req.body;
@@ -655,7 +662,7 @@ export const updateCabAssignTo = async (req, res) => {
 
         await CabModel.update(
             { hasDedicatedDriver: assignmentType !== 'guide-as-driver' },
-            { where: {cabId} }
+            { where: { cabId } }
         );
 
         req.flash("success", "Cab assignment successful");
@@ -668,18 +675,39 @@ export const updateCabAssignTo = async (req, res) => {
     }
 };
 
+export const getAllAssignCab = async (req, res) => {
+    try {
+        const admin = req.session.admin;
 
+        const assignments = await CabAssignment.findAll({
+            include: [
+                {
+                    model: Guide,
+                    as: 'assignedGuide',
+                    attributes: ['guideId', 'guidename', 'email', 'phonenumber']
+                },
+                {
+                    model: Driver,
+                    as: 'assignedDriver',
+                    attributes: ['driverId', 'name', 'email', 'phone']
+                }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
 
+        console.log('Assignments with Guide & Driver:', JSON.stringify(assignments, null, 2));
 
+        res.render('AdminView/cabassignmentlist', {
+            admin,
+            assignments
+        });
 
-
-
-
-
-
-
-
-
+    } catch (error) {
+        console.error('Error fetching cab assignments:', error);
+        req.flash('error', 'Unable to fetch cab assignment list');
+        return res.redirect('/dashboard');
+    }
+};
 
 
 
@@ -856,6 +884,110 @@ export const listBlogs = async (req, res) => {
         return res.redirect("/dashboard");
     }
 };
+
+
+export const addTestimonialForm = async (req, res) => {
+    try {
+        return res.render("AdminView/Frontend/testimonial_add");
+    } catch (err) {
+        req.flash("error", "Server error occurred while rendering the testimonialform");
+        return res.redirect("/testimonial/addform");
+    }
+};
+
+export const addTestimonial = async (req, res) => {
+    try {
+        const { name, description, rating } = req.body;
+        const files = req.files;
+
+        // Normalize all inputs as arrays
+        const names = Array.isArray(name) ? name : [name];
+        const descriptions = Array.isArray(description) ? description : [description];
+        const ratings = Array.isArray(rating) ? rating : [rating];
+
+        if (!names.length || !descriptions.length || !files?.length || !ratings.length) {
+            req.flash("error", "All fields are required");
+            return res.redirect("/testimonial/addform");
+        }
+
+        const testimonialsToAdd = [];
+
+        for (let i = 0; i < names.length; i++) {
+            if (!names[i] || !descriptions[i] || !ratings[i] || !files[i]) continue;
+
+            // Validate numeric rating (1–5)
+            const parsedRating = parseInt(ratings[i]);
+            if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) continue;
+
+            testimonialsToAdd.push({
+                name: names[i],
+                description: descriptions[i],
+                rating: parsedRating,
+                image: files[i].filename
+            });
+        }
+
+        if (testimonialsToAdd.length === 0) {
+            req.flash("error", "No valid testimonials provided");
+            return res.redirect("/testimonial/addform");
+        }
+
+        await TestimonialsModel.bulkCreate(testimonialsToAdd);
+
+        req.flash("success", "Testimonials added successfully");
+        res.redirect("/testimonial/addform");
+
+    } catch (error) {
+        console.error("Error adding testimonials:", error);
+        req.flash("error", "Internal server error: " + error.message);
+        res.redirect("/testimonial/addform");
+    }
+};
+
+export const getTestimonialsList = async (req, res) => {
+    try {
+        const testimonials = await TestimonialsModel.findAll({
+            order: [['id', 'DESC']]
+        });
+
+        res.render("AdminView/Frontend/testimonial_list", {
+            admin: req.session.admin,
+            testimonials,
+            success: req.flash("success"),
+            error: req.flash("error")
+        });
+
+    } catch (error) {
+        console.error("Error fetching testimonials:", error);
+        req.flash("error", "Failed to load testimonials");
+        res.redirect("/dashboard");
+    }
+};
+
+export const deleteTestimonial = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const deleted = await TestimonialsModel.destroy({
+            where: { id }
+        });
+
+        if (deleted) {
+            req.flash("success", "Testimonial deleted successfully");
+        } else {
+            req.flash("error", "Testimonial not found");
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+        req.flash("error", "Error deleting testimonial");
+    }
+
+    res.redirect("/testimonial/list");
+};
+
+
+
+
 
 
 

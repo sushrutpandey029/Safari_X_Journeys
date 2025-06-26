@@ -14,6 +14,8 @@ import sequelize from "./DB_Connection/MySql_Connnet.js";
 import AdminRoutes from "./Routes/AdminRoutes.js";
 import ApiRoutes from "./Routes/ApiRoutes.js";
 import GuideRoute from './Routes/GuideRoutes.js';
+import setupAssociations from './Models/AdminModel/associations.js';
+
 
 const require = createRequire(import.meta.url);
 const MySQLStore = require('express-mysql-session')(session);
@@ -34,6 +36,22 @@ hbs.registerHelper('inc', function (value) {
     return parseInt(value) + 1;
 });
 
+
+// Create a range [start, end] for looping stars
+hbs.registerHelper('range', function (start, end) {
+    const range = [];
+    for (let i = start; i <= end; i++) {
+        range.push(i);
+    }
+    return range;
+});
+
+// Less than or equal
+hbs.registerHelper('lte', function (a, b) {
+    return a <= b;
+});
+
+
 // ✅ Register Handlebars Partials
 app.set("views", path.join(__dirname, "View"));
 hbs.registerPartials(path.join(__dirname, "View", "Partials"));
@@ -48,7 +66,8 @@ app.use('/blog/images', express.static('Public/blog/images'));
 
 app.use('/cab/images', express.static('Public/uploads/cabs'));
 app.use('/driver/images', express.static('Public/uploads/drivers'));
-app.use('/guide/images', express.static('ProfileImages/guide'));
+app.use('/guide/images', express.static('Public/uploads/guides'));
+app.use('/testimonial/images', express.static('Public/uploads/testimonials'));
 
 // ✅ Body Parsers
 app.use(express.json());
@@ -62,7 +81,6 @@ app.set("trust proxy", 1);
 app.use(cors({
     origin: [
         "http://localhost:3000", // React dev
-        "https://38f3-2401-4900-47fa-e5a5-edf2-b4f5-8d2d-9b59.ngrok-free.app",
         "http://localhost:3001", // ngrok (replace this if using it)
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -114,15 +132,26 @@ const PORT = process.env.PORT || 2625;
 
 const startServer = async () => {
     try {
+        console.time('⏳ DB Connection Time');
         await sequelize.authenticate();
-        console.log("✅ DB connected.");
-        await sequelize.sync({ alter: true });
-        app.listen(PORT, '0.0.0.0',() =>
-            console.log(`🚀 Server running: http://localhost:${PORT}`)
-        );
+        console.timeEnd('⏳ DB Connection Time');
+
+        if (process.env.NODE_ENV === 'development') {
+            await sequelize.sync({ alter: true });
+            console.log("🔄 DB synced with alter (dev mode).");
+        } else {
+            await sequelize.sync();
+            console.log("✅ DB synced (production mode).");
+        }
+
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`🚀 Server running: http://localhost:${PORT}`);
+        });
     } catch (err) {
-        console.error("Server failed:", err);
+        console.error("❌ Server failed to start:", err);
     }
 };
 
+
 startServer();
+setupAssociations();

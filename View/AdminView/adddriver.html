@@ -24,12 +24,14 @@
 
           <div class="mb-3">
             <label for="licenseNumber" class="form-label">License Number</label>
-            <input type="text" class="form-control" id="licenseNumber" name="licenseNumber" value="{{formData.licenseNumber}}">
+            <input type="text" class="form-control" id="licenseNumber" name="licenseNumber"
+              value="{{formData.licenseNumber}}">
           </div>
 
           <div class="mb-3">
             <label for="licenseExpiry" class="form-label">License Expiry Date</label>
-            <input type="date" class="form-control" id="licenseExpiry" name="licenseExpiry" value="{{formData.licenseExpiry}}">
+            <input type="date" class="form-control" id="licenseExpiry" name="licenseExpiry"
+              value="{{formData.licenseExpiry}}">
           </div>
 
           <div class="mb-3">
@@ -41,6 +43,12 @@
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email" value="{{formData.email}}">
           </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" value="{{formData.password}}">
+          </div>
+
 
           <div class="mb-3">
             <label for="address" class="form-label">Address</label>
@@ -69,12 +77,14 @@
 
           <div class="mb-3">
             <label for="experienceYears" class="form-label">Experience (Years)</label>
-            <input type="number" class="form-control" id="experienceYears" name="experienceYears" value="{{formData.experienceYears}}">
+            <input type="number" class="form-control" id="experienceYears" name="experienceYears"
+              value="{{formData.experienceYears}}">
           </div>
 
           <div class="mb-3">
             <label for="aadharNumber" class="form-label">Aadhar Number</label>
-            <input type="text" class="form-control" id="aadharNumber" name="aadharNumber" value="{{formData.aadharNumber}}">
+            <input type="text" class="form-control" id="aadharNumber" name="aadharNumber"
+              value="{{formData.aadharNumber}}">
           </div>
 
           <div class="mb-3">
@@ -89,14 +99,15 @@
 
           <div class="mb-3">
             <label for="emergencyContact" class="form-label">Emergency Contact</label>
-            <input type="text" class="form-control" id="emergencyContact" name="emergencyContact" value="{{formData.emergencyContact}}">
+            <input type="text" class="form-control" id="emergencyContact" name="emergencyContact"
+              value="{{formData.emergencyContact}}">
           </div>
 
           <div class="mb-3">
             <label for="isAvailable" class="form-label">Availability</label>
             <select class="form-control" id="isAvailable" name="isAvailable">
-              <option value="true" {{#if (eq formData.isAvailable "true")}}selected{{/if}}>Available</option>
-              <option value="false" {{#if (eq formData.isAvailable "false")}}selected{{/if}}>Not Available</option>
+              <option value="true" {{#if (eq formData.isAvailable "true" )}}selected{{/if}}>Available</option>
+              <option value="false" {{#if (eq formData.isAvailable "false" )}}selected{{/if}}>Not Available</option>
             </select>
           </div>
 

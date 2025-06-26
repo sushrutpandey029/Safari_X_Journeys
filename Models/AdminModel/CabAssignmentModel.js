@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../../DB_Connection/MySql_Connnet.js";
+import Guide from "../AdminModel/GuideModel.js";
+import Driver from '../AdminModel/DriverModel.js';
 
 const CabAssignment = sequelize.define('cabassignments', {
     Id: {
@@ -46,6 +48,18 @@ const CabAssignment = sequelize.define('cabassignments', {
     timestamps: true,
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+});
+
+CabAssignment.belongsTo(Guide, {
+  foreignKey: 'guideId',
+  targetKey: 'guideId',
+  as: 'assignedGuide' // ✅ Unique alias
+});
+
+CabAssignment.belongsTo(Driver, {
+  foreignKey: 'driverId',
+  targetKey: 'driverId', // Use the correct PK if different
+  as: 'assignedDriver'
 });
 
 export default CabAssignment;
