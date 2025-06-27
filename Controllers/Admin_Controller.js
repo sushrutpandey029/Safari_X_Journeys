@@ -4,6 +4,7 @@ import { Op, Sequelize } from 'sequelize';
 import AdminModel from '../Models/AdminModel/Admin_Model.js';
 
 import { encrypt } from '../Utils/encryption.js';
+import { decrypt } from '../Utils/encryption.js';
 
 import CabModel from '../Models/AdminModel/CabModel.js';
 import DriverModel from '../Models/AdminModel/DriverModel.js';
@@ -493,6 +494,29 @@ export const getAllGuides = async (req, res) => {
     }
 };
 
+export const showGuidePassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const guide = await GuideModel.findByPk(id);
+        if (!guide) {
+            req.flash('error', 'Guide not found');
+            return res.redirect('/guide/list');
+        }
+
+        const originalPassword = decrypt(guide.password);
+        // Render a view or send JSON
+        return res.render('AdminView/showpassword', {
+            entity: 'Guide',
+            name: guide.guidename,
+            password: originalPassword
+        });
+    } catch (err) {
+        console.error('Error decrypting guide password:', err);
+        req.flash('error', 'Unable to decrypt password');
+        return res.redirect('/guide/list');
+    }
+};
+
 // Driver Management
 
 export const addDriverForm = async (req, res) => {
@@ -708,12 +732,6 @@ export const getAllAssignCab = async (req, res) => {
         return res.redirect('/dashboard');
     }
 };
-
-
-
-
-
-
 
 
 

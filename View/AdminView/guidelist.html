@@ -14,6 +14,8 @@
     <div class="alert alert-success">{{success}}</div>
     {{/if}}
 
+    
+
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -23,6 +25,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Gender</th>
                                     <th>Email</th>
@@ -31,14 +34,20 @@
                                     <th>Experience</th>
                                     <th>Location</th>
                                     <th>Available</th>
-                                    <th>Image</th>
-                                    <th>Created</th>
+                                    <th>Password</th> {{!-- ✅ New column --}}
+                                
+                                    
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each guides}}
                                 <tr>
                                     <td>{{inc @index}}</td>
+                                    <td>
+                                        {{#if this.profile_image}}
+                                        <img src="/guide/images/{{this.profile_image}}" width="60" height="50" />
+                                        {{else}}N/A{{/if}}
+                                    </td>
                                     <td>{{this.guidename}}</td>
                                     <td>{{this.gender}}</td>
                                     <td>{{this.email}}</td>
@@ -48,11 +57,10 @@
                                     <td>{{this.city}}, {{this.state}}, {{this.country}}</td>
                                     <td>{{#if this.availability}}Yes{{else}}No{{/if}}</td>
                                     <td>
-                                        {{#if this.profile_image}}
-                                        <img src="/guide/images/{{this.profile_image}}" width="60" height="50" />
-                                        {{else}}N/A{{/if}}
+                                        <a href="/guide/{{this.guideId}}/password"
+                                            class="btn btn-sm btn-warning">View</a>
                                     </td>
-                                    <td>{{this.createdAt}}</td>
+                                   
                                 </tr>
                                 {{else}}
                                 <tr>

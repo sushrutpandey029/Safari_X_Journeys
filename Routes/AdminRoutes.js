@@ -15,7 +15,7 @@ import { AdminRegister, renderdashbord,AdminLogin,
     addFaqForm,addFAQs,listFAQs,addBlogForm,addBlogs,listBlogs,
     addDriver,addDriverForm,getAllCabs,
     getAllDrivers,getAllGuides,cabAssignment,
-    updateCabAssignTo,getAllAssignCab,addTestimonial,addTestimonialForm,getTestimonialsList,deleteTestimonial
+    updateCabAssignTo,getAllAssignCab,addTestimonial,addTestimonialForm,getTestimonialsList,deleteTestimonial,showGuidePassword
 
 } from "../Controllers/Admin_Controller.js";
 
@@ -65,6 +65,8 @@ router.get('/cab/assign/list', getAllAssignCab);
 router.get('/addguideform',isAdminLoggedIn, addguideform);
 router.post('/submitguide', upload.single('profileimages'),addGuide);
 router.get('/guide/list', getAllGuides);
+router.get('/guide/:id/password', showGuidePassword);
+
 
 
 
